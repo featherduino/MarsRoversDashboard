@@ -35,7 +35,8 @@ app.get('/getSpiritData', async (req, res) => {
     } catch (err) {
         console.log('error: ', err);
     }
-})
+}
+
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
