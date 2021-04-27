@@ -13,12 +13,12 @@ const updateStore = (store, newState) => {
 }
 
 const render = async (root, state) => {
-    root.innerHTML = App(state)
+    root.innerHTML = renderRoverInfo(state);
 }
 
 
 // create content
-const App = (state) => {
+/*const App = (state) => {
     let { rovers, apod } = state
 
     return `
@@ -30,22 +30,55 @@ const App = (state) => {
                 <p>Here is an example section.</p>
                 <p>
                     One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
+                    the most popular websites across all federal agencies.
+
                 </p>
                 ${ImageOfTheDay(apod)}
             </section>
         </main>
         <footer></footer>
     `
-}
+}*/
+
+const renderRoverInfo = (state) => {
+    const roverData = state.latest_photos;
+    const roverDetails = ` 
+    <div id="roverInfo">
+        <table>
+            <tr>
+                <th>Name</th>
+                <td>${roverData[0].rover.name}</td>
+            </tr>
+            <tr>
+                <th>Launch date</th>
+                <td>${roverData[0].rover.launch_date}</td>
+            </tr>
+            <tr>
+                <th>Landing date</th>
+                <td>${roverData[0].rover.landing_date}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>${roverData[0].rover.status}</td>
+            </tr>
+            <tr>
+                <th>Most recent photos taken on</th>
+                <td>${roverData.slice(-1).pop().earth_date}</td>
+            </tr>
+        </table>
+    </div>
+        `;
+    return roverDetails;
+};
+
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
-    render(root, store)
+
+getSpiritdata_frombackend();
+getCuriousitydata_frombackend();
+getOpportunitydata_frombackend();
+
 })
 
 // ------------------------------------------------------  COMPONENTS
@@ -90,16 +123,40 @@ const ImageOfTheDay = (apod) => {
         `)
     }
 }
-
 // ------------------------------------------------------  API CALLS
 
 // Example API call
-const getImageOfTheDay = (state) => {
-    let { apod } = state
 
-    fetch(`http://localhost:3000/apod`)
-        .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+const getSpiritdata_frombackend = () => {
 
-    return data
-}
+    fetch(`http://localhost:3000/getSpiritData`)
+    .then(res => res.json())
+    .then((roverData) => {
+    const latest_photos = roverData.latest_photos;
+    updateStore(store, { latest_photos });
+    render(root, store)
+ 
+})}
+
+const getOpportunitydata_frombackend = () => {
+
+    fetch(`http://localhost:3000/getCuriousitytData`)
+    .then(res => res.json())
+    .then((roverData) => {
+    const latest_photos = roverData.latest_photos;
+    updateStore(store, { latest_photos });
+    render(root, store)
+ 
+})}
+
+const getCuriousitydata_frombackend = () => {
+
+    fetch(`http://localhost:3000/getOpportunitytData`)
+    .then(res => res.json())
+    .then((roverData) => {
+    const latest_photos = roverData.latest_photos;
+    updateStore(store, { latest_photos });
+    render(root, store)
+ 
+})}
+
